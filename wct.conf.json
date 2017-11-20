@@ -2,7 +2,7 @@
   "quiet": true,
   "plugins": {
     "local": {
-      "browsers": ["chrome", "safari"]
+      "browsers": ["chrome"]
     }
   }
 }

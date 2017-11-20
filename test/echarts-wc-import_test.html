@@ -25,6 +25,18 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="ChartsProperty">
+      <template>
+        <echarts-wc-import charts='["pie","scatter"]'></echarts-wc-import>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="MixedProperties">
+      <template>
+        <echarts-wc-import charts='["pie"]' group="common"></echarts-wc-import>
+      </template>
+    </test-fixture>
+
     <script>
       suite('echarts-wc-import', () => {
 
@@ -52,6 +64,25 @@
           element.addEventListener('echarts-loaded', function(event) {
             assert.equal(typeof echarts, 'object');
             assert.equal(echarts.version, element.echarts_version);
+            done();
+          });
+        });
+
+        test('setting the charts property loads the correct file', () => {
+          const element = fixture('ChartsProperty');
+          assert.equal(element.charts.length, 2);
+          element.addEventListener('echarts-loaded', function(event) {
+            assert.equal(element._loaded[0], './echarts-common.html');
+            done();
+          });
+        });
+
+        test('setting charts and group properties, group wins over charts', () => {
+          const element = fixture('MixedProperties');
+          assert.equal(element.group, 'common');
+          assert.equal(element.charts.length, 1);
+          element.addEventListener('echarts-loaded', function(event) {
+            assert.equal(element._loaded[0], './echarts-common.html');
             done();
           });
         });

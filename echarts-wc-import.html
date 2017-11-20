@@ -79,17 +79,17 @@
       }
 
       ready() {
-        super.ready()
+        super.ready();
 
         // Check the `group` property once the element is ready
         if (this.group.length !== 0 &&
             this.groups.indexOf(this.group) !== -1) {
-          this._loadEcharts()
+          this._loadEcharts();
         // evaluate if charts property has been specified
         } else if (this.charts.length > 0) {
-          this._validateCharts(this.charts)
+          this._validateCharts(this.charts);
         } else {
-          console.warn('Attribute value not defined, nothing will be load')
+          console.warn('Attribute value not defined, nothing will be load');
         }
 
       }
@@ -102,21 +102,20 @@
        */
       _validateCharts(charts) {
 
-        let i = 0, checked, selected = []
-        console.log('Observing charts')
+        let i = 0, selected = []
         // validate each inputs type
         for (i ; i < charts.length; i++) {
           if (this._whiteCharts.indexOf(charts[i]) >= 0) {
             // store the validated type
-            selected.push(charts[i])
+            selected.push(charts[i]);
           } else {
             // warn for not supported chart type
-            console.warn(`Chart type not supported. - ${charts[i]}`)
+            console.warn(`Chart type not supported. - ${charts[i]}`);
           }
         }
 
         // load selected charts
-        this._selectLib(selected)
+        this._selectLib(selected);
 
       }
 
@@ -126,13 +125,45 @@
        * @param {Array} value
        */
       _selectLib(charts) {
-        // break if no charts selected
-        if (charts.length === 0) return
-        // match charts set with bundles
-        // ... TODO ...
 
+        // break if no charts selected
+        if (charts.length === 0) return;
+        let simpleList = [
+          'line',
+          'pie',
+          'bar',
+        ];
+        let commonList = [
+          'line',
+          'pie',
+          'bar',
+          'scatter',
+        ];
+        // match charts set with bundles
+        if (this._isListed(charts, simpleList)) {
+          this.group = 'simple';
+        } else if (this._isListed(charts, commonList)) {
+          this.group = 'common';
+        } else {
+          this.group = 'full';
+        }
         // load choosen bundle
-        // this._loadEcharts()
+        this._loadEcharts();
+
+      }
+
+      /**
+       * Check if all the requested charts are in the the provided list
+       *
+       * @param {Array} charts
+       * @param {Array} list
+       */
+      _isListed(charts, list) {
+
+        for (let i = 0; i < charts.length; i++) {
+          if (list.indexOf(charts[i]) >= 0) return false;
+        }
+        return true;
 
       }
 
