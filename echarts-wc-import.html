@@ -1,0 +1,156 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../lazy-imports/lazy-imports-mixin.html">
+
+<dom-module id="echarts-wc-import">
+
+  <!-- Import each echart component according to the kind of chart required -->
+  <link rel="lazy-import" group="full" href="./echarts-full.html">
+  <link rel="lazy-import" group="common" href="./echarts-common.html">
+  <link rel="lazy-import" group="simple" href="./echarts-simple.html">
+  <link rel="lazy-import" group="source" href="./echarts-source.html">
+
+  <script>
+    /**
+     * `echarts-wc-import`
+     * Import Echarts JS library
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class EchartsWcImport extends Polymer.LazyImportsMixin(Polymer.Element) {
+      static get is() { return 'echarts-wc-import'; }
+      static get properties() {
+        return {
+          /**
+           * Current Echarts version loaded
+           *
+           */
+          echarts_version: {
+            type: String,
+            value: '3.8.5'
+          },
+          /**
+           * Switch to directly load one specific version of `Echarts`
+           * See: https://ecomfe.github.io/echarts-doc/public/en/tutorial.html#Create%20Custom%20Build%20of%20ECharts
+           *
+           */
+          group: {
+            type: String,
+            value: ''
+          },
+          /**
+           * Whitelist of values to be accepted by `group` property
+           */
+          groups: {
+            type: Array,
+            value: ['full','common','simple','source']
+          },
+          /**
+           * Let the user define which kind of charts really needs
+           * if no chart have been selected, then whole library will be loaded
+           *
+           */
+          charts: {
+            type: Array,
+            value: []
+          },
+          /**
+           * List of supported charts
+           * Needed for correct lazyloading of echarts
+           */
+          _whiteCharts: {
+            type: Array,
+            value: [
+              'bar',
+              'pie',
+              'line',
+              'scatter',
+            ]
+          },
+          /**
+           * Keep track of the already loaded charts
+           */
+          _loaded: {
+            type: Array,
+            value: []
+          },
+        };
+      }
+
+      ready() {
+        super.ready()
+
+        // Check the `group` property once the element is ready
+        if (this.group.length !== 0 &&
+            this.groups.indexOf(this.group) !== -1) {
+          this._loadEcharts()
+        // evaluate if charts property has been specified
+        } else if (this.charts.length > 0) {
+          this._validateCharts(this.charts)
+        } else {
+          console.warn('Attribute value not defined, nothing will be load')
+        }
+
+      }
+
+      /**
+       * Validate charts list required
+       * Whitelist
+       *
+       * @param {Array} value
+       */
+      _validateCharts(charts) {
+
+        let i = 0, checked, selected = []
+        console.log('Observing charts')
+        // validate each inputs type
+        for (i ; i < charts.length; i++) {
+          if (this._whiteCharts.indexOf(charts[i]) >= 0) {
+            // store the validated type
+            selected.push(charts[i])
+          } else {
+            // warn for not supported chart type
+            console.warn(`Chart type not supported. - ${charts[i]}`)
+          }
+        }
+
+        // load selected charts
+        this._selectLib(selected)
+
+      }
+
+      /**
+       * Match user charts choice with the best available bundle
+       *
+       * @param {Array} value
+       */
+      _selectLib(charts) {
+        // break if no charts selected
+        if (charts.length === 0) return
+        // match charts set with bundles
+        // ... TODO ...
+
+        // load choosen bundle
+        // this._loadEcharts()
+
+      }
+
+      /**
+       * Load the Echarts library according to the previously set
+       * value of `group` property
+       */
+      _loadEcharts() {
+
+        this.importLazyGroup(this.group).then((results) => {
+          this._loaded = results.loaded;
+          this.dispatchEvent(new CustomEvent('echarts-loaded', results));
+        });
+
+      }
+
+    }
+
+    window.customElements.define(EchartsWcImport.is, EchartsWcImport);
+  </script>
+</dom-module>

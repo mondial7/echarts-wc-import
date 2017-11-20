@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>echarts-wc-import test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../echarts-wc-import.html">
+  </head>
+  <body>
+
+    <test-fixture id="BasicTest">
+      <template>
+        <echarts-wc-import></echarts-wc-import>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="GroupProperty">
+      <template>
+        <echarts-wc-import group="common"></echarts-wc-import>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('echarts-wc-import', () => {
+
+        test('instantiating the element with default properties works', () => {
+          const element = fixture('BasicTest');
+          assert.equal(element.echarts_version, '3.8.5');
+          assert.equal(element.groups.length, 4);
+          assert.equal(element.groups[2], 'simple');
+        });
+
+        // TODO finish it
+        test('setting the group property loads the correct file', () => {
+          const element = fixture('GroupProperty');
+          assert.equal(element.group, 'common');
+          element.addEventListener('echarts-loaded', function(event) {
+            assert.equal(event.loaded.length, 1);
+            assert.equal(element._loaded.length, 1);
+            assert.equal(element._loaded[0], './echarts-common.html');
+            done();
+          });
+        });
+
+      });
+    </script>
+
+  </body>
+</html>
