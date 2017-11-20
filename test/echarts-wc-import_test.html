@@ -35,7 +35,6 @@
           assert.equal(element.groups[2], 'simple');
         });
 
-        // TODO finish it
         test('setting the group property loads the correct file', () => {
           const element = fixture('GroupProperty');
           assert.equal(element.group, 'common');
@@ -43,6 +42,16 @@
             assert.equal(event.loaded.length, 1);
             assert.equal(element._loaded.length, 1);
             assert.equal(element._loaded[0], './echarts-common.html');
+            done();
+          });
+        });
+
+        test('echarts library is loaded', () => {
+          const element = fixture('GroupProperty');
+          assert.equal(element.group, 'common');
+          element.addEventListener('echarts-loaded', function(event) {
+            assert.equal(typeof echarts, 'object');
+            assert.equal(echarts.version, element.echarts_version);
             done();
           });
         });
